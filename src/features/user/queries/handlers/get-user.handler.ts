@@ -1,4 +1,3 @@
-// queries/handlers/get-user.handler.ts
 import { QueryHandler, IQueryHandler } from '@nestjs/cqrs';
 import { GetUserQuery } from '../get-user.query';
 import { UserService } from '../../user.service';

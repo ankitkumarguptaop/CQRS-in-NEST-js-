@@ -1,4 +1,3 @@
-// users/commands/handlers/signin-user.handler.ts
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { SignInUserCommand } from '../signin-user.command';
 import { UserService } from '../../user.service';

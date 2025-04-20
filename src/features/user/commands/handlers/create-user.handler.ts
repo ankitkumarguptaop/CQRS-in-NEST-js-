@@ -1,4 +1,3 @@
-// users/commands/handlers/create-user.handler.ts
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { CreateUserCommand } from '../create-user.command';
 import { UserService } from '../../user.service';
