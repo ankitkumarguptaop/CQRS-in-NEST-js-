@@ -1,60 +1,55 @@
+// user.controller.ts
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
+  Controller,
+  Post,
+  Get,
   Param,
+  Patch,
   Delete,
-  Req,
   Res,
 } from '@nestjs/common';
-import { UserService } from './user.service';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { CreateUserCommand } from './commands/create-user.command';
+import { SignInUserCommand } from './commands/signin-user.command';
+import { GetUsersQuery } from './queries/get-users.query';
+import { GetUserQuery } from './queries/get-user.query';
 import { CreateUserDto } from './create-user.dto';
-import { UpdateUserDto } from './update-user.dto';
 import { SignInUserDto } from './signin-user.dto';
 import { Response } from 'express';
 
 @Controller('users')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly commandBus: CommandBus,
+    private readonly queryBus: QueryBus,
+  ) {}
 
   @Post('/signup')
   signup(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
+    return this.commandBus.execute(new CreateUserCommand(createUserDto));
   }
 
   @Post('/signin')
-  async signin(
-    @Body() signInUserDto: SignInUserDto,
-    @Res() response: Response,
-  ) {
-    const user = await this.userService.signIn(signInUserDto);
-    const token = this.userService.generateToken(user.id);
-    response.cookie('jwt', token, {
+  async signin(@Body() dto: SignInUserDto, @Res() res: Response) {
+    const { user, token } = await this.commandBus.execute(
+      new SignInUserCommand(dto),
+    );
+
+    res.cookie('jwt', token, {
       httpOnly: true,
       maxAge: 3 * 24 * 60 * 60 * 1000,
     });
-    response.json({ message: 'Login successful', user });
+    res.json({ message: 'Login successful', user });
   }
 
   @Get()
-  findAll() {
-    return this.userService.findAll();
+  listUser() {
+    return this.queryBus.execute(new GetUsersQuery());
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.userService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(+id, updateUserDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.userService.remove(+id);
+  getUser(@Param('id') id: string) {
+    return this.queryBus.execute(new GetUserQuery(+id));
   }
 }

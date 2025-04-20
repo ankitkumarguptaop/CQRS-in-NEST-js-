@@ -7,6 +7,7 @@ import { ProductModule } from './features/product/product.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { dataSourceOptions } from 'ormconfig';
 import { AuthenticationMiddleware } from './infrastructure/middlewares/auth.middleware';
+import { CqrsModule } from '@nestjs/cqrs';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { AuthenticationMiddleware } from './infrastructure/middlewares/auth.midd
     }),
     UserModule,
     ProductModule,
+    CqrsModule
 
   ], 
   controllers: [AppController],

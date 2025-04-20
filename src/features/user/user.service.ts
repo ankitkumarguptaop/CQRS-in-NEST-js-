@@ -10,7 +10,6 @@ import { UserRepository } from 'src/infrastructure/repositories/user/user.reposi
 import { UpdateUserDto } from './update-user.dto';
 import { SignInUserDto } from './signin-user.dto';
 import { ConfigService } from '@nestjs/config';
-import { User } from 'src/domain/user/user.entity';
 import { UserEmailAlreadyExistsConflict } from 'src/domain/user/exceptions/exception';
 
 @Injectable()
